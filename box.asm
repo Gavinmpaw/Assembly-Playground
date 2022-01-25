@@ -2,8 +2,8 @@ segment .data
 	borderChar db '#'
 	centerChar db '*'
 	newlineChar db 10,0
-	MaximumX db 0x05
-	MaximumY db 0x05
+	maximumX dq 0x05
+	maximumY dq 0x05
 
 	TestBox	db '#','#','#','#','#',
 			db '#','*','*','*','#',
@@ -46,7 +46,7 @@ _start:
 			pop rax
 
 			add rbx, 1
-			cmp rbx, 0x05
+			cmp rbx, [maximumX]
 			jl innerLoop
 
 		push rax
@@ -58,7 +58,7 @@ _start:
 		pop rax		
 
 		add rax,1
-		cmp rax, 0x05
+		cmp rax, [maximumY]
 		jl outerLoop
 			
 	call exit
