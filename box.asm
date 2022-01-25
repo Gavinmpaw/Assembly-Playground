@@ -8,8 +8,6 @@ global _start
 _start:
 	mov [storage], byte 'a'
 
-	;push storage
-
 	call printChar
 	call exit
 
