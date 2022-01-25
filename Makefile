@@ -1,10 +1,4 @@
-NAME=hw_easy
-
-all: hw_easy
-
-clean:
-	rm -rf hw_easy hw_easy.o
-
-hw_easy: hw_easy.asm
-	nasm -f elf -F dwarf -g hw_easy.asm
-	gcc -no-pie -g -m32 -o hw_easy hw_easy.o
+HelloWorld:
+	nasm -f elf64 hello_world.asm
+	ld -s -o hello_world hello_world.o
+	rm hello_world.o
