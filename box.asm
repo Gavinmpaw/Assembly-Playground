@@ -5,7 +5,7 @@ segment .data
 	MaximumX db 0x05
 	MaximumY db 0x05
 
-	TestBox db '#','#','#','#','#',
+	TestBox	db '#','#','#','#','#',
 			db '#','*','*','*','#',
 			db '#','*','*','*','#', 
 			db '#','*','*','*','#', 
@@ -61,10 +61,6 @@ _start:
 		cmp rax, 0x05
 		jl outerLoop
 			
-	;call printChar
-	;add rsp, 8
-
-
 	call exit
 
 printChar:
