@@ -8,9 +8,13 @@ TutPointKeebEx:
 	ld -s -o tutExample tutPointExampleReadFromKeyboardAndDisplay.o
 	rm tutPointExampleReadFromKeyboardAndDisplay.o
 
-Test:
+test:
 	nasm -f elf32 test.asm
 	gcc -no-pie -m32 test.o -o test
 	rm test.o
 
+box:
+	nasm -f elf64 box.asm
+	ld -s -o box box.o
+	rm box.o
 
