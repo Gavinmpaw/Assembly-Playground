@@ -8,22 +8,15 @@ global _start
 _start:
 	mov [storage], byte 'a'
 
-	push storage
+	;push storage
 
-	mov	eax, 4 		; print
-	mov	ebx, 1 		; to stdout
-	pop rcx
-	mov	edx, 1
-	int	0x80 		; syscall	
-
-	;call printChar
-
+	call printChar
 	call exit
 
 printChar:
 	mov	eax, 4 		; print
 	mov	ebx, 1 		; to stdout
-	pop rcx
+	mov ecx, storage
 	mov	edx, 1
 	int	0x80 		; syscall	
 
