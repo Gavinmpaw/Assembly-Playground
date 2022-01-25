@@ -1,18 +1,16 @@
 segment .data
-	borderChar db '#'
-	centerChar db '*'
 	newlineChar db 10,0
+	spaceChar db 32
+
 	maximumX dq 0x05
 	maximumY dq 0x05
 
-	TestBox	db '#','#','#','#','#',
+	TestBox:	
+			db '#','#','#','#','#',
 			db '#','*','*','*','#',
 			db '#','*','*','*','#', 
 			db '#','*','*','*','#', 
 			db '#','#','#','#','#'
-
-segment .bss
-    storage resb 25
 
 segment .text
 
@@ -34,14 +32,21 @@ _start:
 			mov rdx, TestBox
 			add rdx, rcx
 
-			; printing (saving both counters and recovering them after)
+			; push loop counters to the stack so they dont get reset
 			push rax
 			push rbx
 
+			; print the target character
 			push rdx
 			call printChar
 			add rsp, 8
 
+			; print a space for padding to make the box look nice
+			push spaceChar
+			call printChar
+			add rsp, 8
+
+			; popping loop counters back off the stack
 			pop rbx
 			pop rax
 
