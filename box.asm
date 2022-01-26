@@ -1,5 +1,5 @@
 segment .data
-	newlineChar db 10,0
+	newlineChar db 10
 	spaceChar db 32
 
 	maximumX dq 0x05
@@ -25,7 +25,7 @@ _start:
 		innerLoop:
 			; calculating overall offset
 			mov rcx, rax
-			imul rcx, 0x05
+			imul rcx, [maximumX]
 			add rcx, rbx
 			
 			; calculating target character address based on offset
