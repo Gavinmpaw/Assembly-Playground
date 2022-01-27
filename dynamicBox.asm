@@ -4,11 +4,12 @@ segment .data
 	borderChar db '#'
 	fillChar db '*'
 
-	maximumX dq 0x0A
-	maximumY dq 0x0A
+	maximumX dq 0x10
+	maximumY dq 0x10
 
 segment .bss
-	boxSpace: resb 100
+	;boxSpace: resb 100
+	boxSpace: resb 8
 	
 segment .text
 
@@ -16,11 +17,24 @@ global _start
 	
 _start:
 
+	call allocateBox
+	
 	call fillBox
 	
 	call printBox
 				
 	call exit
+
+allocateBox:
+	; calculating maximumX * maximumY, or the ammount of space needed for the box
+	mov rbx, [maximumX]
+	imul rbx, [maximumY]
+
+	; need to get address to empty space of size stored in rbx and store said address in rax
+
+	mov [boxSpace], rax
+
+	ret
 
 printChar:
 	mov	eax, 4 		; print
@@ -31,6 +45,8 @@ printChar:
 	ret
 
 printBox:
+	mov r8, [boxSpace]
+
 	mov rax, 0x00
 
 	printBoxLoopOuter:
@@ -42,7 +58,7 @@ printBox:
 			add rcx, rbx
 			
 			; calculating target character address based on offset
-			mov rdx, boxSpace
+			mov rdx, [r8]
 			add rdx, rcx
 
 			; push loop counters to the stack so they dont get reset
@@ -83,6 +99,8 @@ printBox:
 	ret
 
 fillBox:
+	mov r8, [boxSpace]
+
 	mov rax, 0x00
 
 	fillBoxLoopOuter:
@@ -94,7 +112,7 @@ fillBox:
 			add rcx, rbx
 			
 			; calculating target character address based on offset
-			mov rdx, boxSpace
+			mov rdx, [r8]
 			add rdx, rcx
 			
 			; top and bottom borders		
