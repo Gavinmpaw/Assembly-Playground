@@ -8,8 +8,8 @@ segment .data
 	maximumY dq 0x20
 
 	MMAP_ARGS: 
-				DD 0
-				DD 0
+				DD 0 ; starting location (0 to allow kernel to pick one)
+				DD 0 ; bytes to allocate (0 so that it segfaults if there is a problem)
 				DD 3
 				DD 34
 				DD -1
