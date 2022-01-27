@@ -96,10 +96,37 @@ fillBox:
 			; calculating target character address based on offset
 			mov rdx, boxSpace
 			add rdx, rcx
+			
+			; top and bottom borders		
+			cmp rax, 0x00
+			je placeBorder
+								
+			mov rcx, [maximumY] ; moving maxY into rcx and decrimenting it to imitate rax == (maxY - 1)	
+			dec rcx			
+			cmp rax, rcx
+			je placeBorder
 
-			;filling box with characters
-			mov cl, [borderChar]
-			mov byte [rdx], cl
+			; side borders
+			cmp rbx, 0x00
+			je placeBorder
+
+			mov rcx, [maximumX]
+			dec rcx
+			cmp rbx, rcx
+			je placeBorder
+			
+
+			placeFill:
+				mov cl, [fillChar]
+				mov byte [rdx], cl
+				jmp endPlaceChar
+	
+			placeBorder:
+				mov cl, [borderChar]
+				mov byte [rdx], cl
+				jmp endPlaceChar
+
+			endPlaceChar:
 
 			add rbx, 1
 			cmp rbx, [maximumX]
