@@ -4,8 +4,16 @@ segment .data
 	borderChar db '#'
 	fillChar db '*'
 
-	maximumX dq 0x05
-	maximumY dq 0x05
+	maximumX dq 0x20
+	maximumY dq 0x20
+
+	MMAP_ARGS: 
+				DD 0
+				DD 0
+				DD 3
+				DD 34
+				DD -1
+				DD 0
 
 segment .bss
 	;boxSpace: resb 100
@@ -27,20 +35,17 @@ _start:
 
 allocateBox:
 
-	mov rax, 12
-	xor rbx, rbx
-	int 0x80
-
 	; calculating maximumX * maximumY, or the ammount of space needed for the box
 	mov rbx, [maximumX]
 	imul rbx, [maximumY]
 
-	mov [boxSpace], rax
-	add rax, rbx
+	mov [MMAP_ARGS + 4], ebx
 
-	mov rbx, rax
-	mov rax, 12
+	mov rax, 90 ; mmap
+	mov rbx, MMAP_ARGS
 	int 0x80
+
+	mov [boxSpace], rax
 
 	ret
 
