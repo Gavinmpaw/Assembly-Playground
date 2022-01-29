@@ -4,8 +4,8 @@ segment .data
 	borderChar db '#'
 	fillChar db '*'
 
-	maximumX dq 0x20
-	maximumY dq 0x20
+	maximumX dq 0x05
+	maximumY dq 0x05
 
 	MMAP_ARGS: 
 				DD 0 ; starting location (0 to allow kernel to pick one)
@@ -44,6 +44,15 @@ allocateBox:
 	mov rax, 90 ; mmap
 	mov rbx, MMAP_ARGS
 	int 0x80
+
+	;mov rax, 9 	; call number
+	;mov rdi, 0  	; first arg
+	;mov esi, ebx 
+	;mov rdx, 3
+	;mov r10, 34
+	;mov r8, -1
+	;mov r9, 0		; last arg
+	;syscall
 
 	mov [boxSpace], rax
 
