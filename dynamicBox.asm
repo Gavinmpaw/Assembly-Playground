@@ -4,11 +4,10 @@ segment .data
 	borderChar db '#'
 	fillChar db '*'
 
-	maximumX dq 0xFF
-	maximumY dq 0xFF
+	maximumX dq 0x05
+	maximumY dq 0x05
 
 segment .bss
-	;boxSpace: resb 100
 	boxSpace: resb 8
 	
 segment .text
@@ -31,13 +30,15 @@ allocateBox:
 	mov rbx, [maximumX]
 	imul rbx, [maximumY]
 
+	; mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, 0, 0)
+
 	mov rax, 9 		; call number
 	mov rdi, 0  	; target starting address (0 to allow kernel to choose)
 	mov rsi, rbx	; size in bytes 
-	mov rdx, 3		
-	mov r10, 34
-	mov r8, 0
-	mov r9, 0		; last arg
+	mov rdx, 3		; PROT_READ | PROT_WRITE		
+	mov r10, 34		; MAP_PRIVATE | MAP_ANONYMOUS
+	mov r8, 0		; fd
+	mov r9, 0		; off
 	syscall
 
 	mov [boxSpace], rax
@@ -165,6 +166,7 @@ fillBox:
 	ret
 
 exit:
-	mov eax, 1
-	mov ebx, 0
-	int 0x80
+	; exit(0)
+	mov rax, 60
+	mov rdi, 0
+	syscall

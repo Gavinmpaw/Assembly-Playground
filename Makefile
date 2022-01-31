@@ -22,5 +22,3 @@ dynbox:
 	nasm -f elf64 dynamicBox.asm
 	ld -s -o dynamicBox dynamicBox.o
 	rm dynamicBox.o
-	./dynamicBox
-	rm dynamicBox
