@@ -24,4 +24,3 @@ dynbox:
 	rm dynamicBox.o
 	./dynamicBox
 	rm dynamicBox
-

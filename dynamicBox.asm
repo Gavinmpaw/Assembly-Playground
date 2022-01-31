@@ -4,16 +4,8 @@ segment .data
 	borderChar db '#'
 	fillChar db '*'
 
-	maximumX dq 0x05
-	maximumY dq 0x05
-
-	MMAP_ARGS: 
-				DD 0 ; starting location (0 to allow kernel to pick one)
-				DD 0 ; bytes to allocate (0 so that it segfaults if there is a problem)
-				DD 3
-				DD 34
-				DD -1
-				DD 0
+	maximumX dq 0xFF
+	maximumY dq 0xFF
 
 segment .bss
 	;boxSpace: resb 100
@@ -39,31 +31,25 @@ allocateBox:
 	mov rbx, [maximumX]
 	imul rbx, [maximumY]
 
-	mov [MMAP_ARGS + 4], ebx
-
-	mov rax, 90 ; mmap
-	mov rbx, MMAP_ARGS
-	int 0x80
-
-	;mov rax, 9 	; call number
-	;mov rdi, 0  	; first arg
-	;mov esi, ebx 
-	;mov rdx, 3
-	;mov r10, 34
-	;mov r8, -1
-	;mov r9, 0		; last arg
-	;syscall
+	mov rax, 9 		; call number
+	mov rdi, 0  	; target starting address (0 to allow kernel to choose)
+	mov rsi, rbx	; size in bytes 
+	mov rdx, 3		
+	mov r10, 34
+	mov r8, 0
+	mov r9, 0		; last arg
+	syscall
 
 	mov [boxSpace], rax
 
 	ret
 
 printChar:
-	mov	eax, 4 		; print
-	mov	ebx, 1 		; to stdout
-	mov rcx, qword [rsp + 8]
-	mov	edx, 1
-	int	0x80 		; syscall	
+	mov rax, 1 				; call number
+	mov rdi, 1				; stdout
+	mov rsi, qword [rsp + 8]; address to print (previously pushed to stack)
+	mov rdx, 1				; number of bytes to print
+	syscall
 	ret
 
 printBox:
