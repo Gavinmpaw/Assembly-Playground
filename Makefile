@@ -22,3 +22,8 @@ dynbox:
 	nasm -f elf64 dynamicBox.asm
 	ld -s -o dynamicBox dynamicBox.o
 	rm dynamicBox.o
+
+numInput:
+	nasm -f elf64 numberInput.asm
+	ld -s -o numInput numberInput.o
+	rm numberInput.o
