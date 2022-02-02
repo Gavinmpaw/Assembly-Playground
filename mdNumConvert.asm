@@ -13,6 +13,8 @@ global _start
 _start:
 		mov rsi, toConvert
 
+		; count number of characters that need converting
+		; length (in characters) will be stored in convertLength after section
 		lengthCountingLoop:
 			add rsi, 1
 			add dword [convertLength], 1
@@ -24,6 +26,10 @@ _start:
 		mov r11, 0 ; sum storage
 		mov r12, 1
 
+
+		; from the least significant digit to the most moves over the number
+		; converting and summing the value, after this point we should have the number
+		; stored in convertedNum
 		mov r10, [convertLength]
 		summingLoop:
 			mov rsi, toConvert
@@ -41,6 +47,7 @@ _start:
 			cmp r10, 0
 			jg summingLoop
 
+		; prints a character specified in character a number of times equal to the number
 		printingLoop:
 
 			push r11
