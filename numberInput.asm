@@ -48,7 +48,9 @@ _start:
 	mov rdx, 1
 	syscall
 
-	mov rax, 60				; sys_exit
-	mov rdi, 0				; exit code 0
-	syscall 
-	
+	int3
+
+	;mov rax, 60				; sys_exit
+	;mov rdi, 0				; exit code 0
+	;syscall 
+

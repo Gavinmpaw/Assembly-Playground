@@ -17,3 +17,13 @@ numInput:
 	nasm -f elf64 numberInput.asm
 	ld -s -o numInput numberInput.o
 	rm numberInput.o
+
+multiDigitNumberConversion:
+	nasm -f elf64 mdNumConvert.asm
+	ld -s -o mdNumConvert mdNumConvert.o
+	rm mdNumConvert.o
+
+basically_stdio:
+	nasm -f elf64 basically_stdio.asm
+	ld -s -o basically_stdio basically_stdio.asm
+	rm basically_stdio.o
