@@ -1,6 +1,7 @@
 section .data
-	string db "output %d <first int %d <second int",10,0
-	decimPlace db "{DecimalInt}"
+	string db "first: %d second: %d error: %q",10,0
+	decimPlaceholder db "[DecimalInt]",0
+	formatError db "[FORMAT ERROR]",0
 
 section .text
 
@@ -30,19 +31,7 @@ basically_printf:
 		jmp nonHandle
 
 	formatHandling:
-		inc rsi
-		cmp byte [rsi], 'd'
-		jne nonHandle
-
-		push rsi
-
-		mov rax, 1
-		mov rdi, 1
-		mov rsi, decimPlace
-		mov rdx, 12
-		syscall
-
-		pop rsi
+		call printFormat
 
 	nonHandle:
 	inc rsi
@@ -50,3 +39,31 @@ basically_printf:
 
 	end:
 	ret
+
+printFormat:
+	inc rsi
+	cmp byte [rsi], 'd'
+	jne fmtError
+	
+	push rsi
+
+	mov rdi, decimPlaceholder
+	call basically_printf
+
+	pop rsi
+
+	ret
+
+	fmtError:	
+		push rsi
+		mov rdi, formatError
+		call basically_printf
+		pop rsi
+		ret
+
+
+
+
+
+
+	
