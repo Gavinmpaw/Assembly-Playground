@@ -3,6 +3,8 @@ section .data
 	decimPlaceholder db "[DecimalInt]",0
 	formatError db "[FORMAT ERROR]",0
 
+	intArg dd 64
+
 section .text
 
 global _start
@@ -43,24 +45,20 @@ basically_printf:
 printFormat:
 	inc rsi
 	cmp byte [rsi], 'd'
-	jne fmtError
+	je decimalIntegerPrint
 	
 	push rsi
-
-	mov rdi, decimPlaceholder
+	mov rdi, formatError
 	call basically_printf
-
 	pop rsi
-
 	ret
 
-	fmtError:	
+	decimalIntegerPrint:	
 		push rsi
-		mov rdi, formatError
+		mov rdi, decimPlaceholder
 		call basically_printf
 		pop rsi
 		ret
-
 
 
 

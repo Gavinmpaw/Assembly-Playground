@@ -18,11 +18,16 @@ numInput:
 	ld -s -o numInput numberInput.o
 	rm numberInput.o
 
-multiDigitNumberConversion:
+multiDigitNumberConversionFromString:
 	nasm -f elf64 mdNumConvert.asm
 	ld -s -o mdNumConvert mdNumConvert.o
 	rm mdNumConvert.o
 
+multiDigitNumberToString: mdTs.asm
+	nasm -f elf64 mdTs.asm
+	ld -s -o mdTs mdTs.o
+	rm mdTs.o
+	
 basically_stdio: basically_stdio.asm
 	nasm -f elf64 basically_stdio.asm
 	ld -s -o basically_stdio basically_stdio.o
