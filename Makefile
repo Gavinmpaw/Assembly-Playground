@@ -23,7 +23,7 @@ multiDigitNumberConversion:
 	ld -s -o mdNumConvert mdNumConvert.o
 	rm mdNumConvert.o
 
-basically_stdio:
+basically_stdio: basically_stdio.asm
 	nasm -f elf64 basically_stdio.asm
-	ld -s -o basically_stdio basically_stdio.asm
+	ld -s -o basically_stdio basically_stdio.o
 	rm basically_stdio.o
