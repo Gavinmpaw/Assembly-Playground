@@ -27,25 +27,31 @@ _start:
 		mov rax, [number]
 		cqo
 		idiv rdi
+		mov r11, rax
 
 		push rdi
 
-		mov rdx, [number]
 		imul rdi, rax
-		sub rdx, rdi
+		sub [number], rdi
 
-		push rdx
+		mov rbx, 10
+		mov rax, rdi
+		cqo
+		idiv rbx
+		mov rdi, rax
 
-		lea rsi, [numberChars + rax]
+		push rdi
+
+		lea rsi, [numberChars + r11]
 		mov rax, 1
 		mov rdi, 1
 		mov rdx, 1
 		syscall
 
-		pop rdx
 		pop rdi
 
 		cmp rdx, 0
+		jg lpSt2
 		
 		
 
