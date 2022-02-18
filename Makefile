@@ -1,33 +1,43 @@
+# explains itself
 HelloWorld:
 	nasm -f elf64 hello_world.asm
 	ld -s -o hello_world hello_world.o
 	rm hello_world.o
 
-box:
-	nasm -f elf64 box.asm
-	ld -s -o box box.o
-	rm box.o
+# prints a neat little box, one of my earlier test files
+box: testing/box.asm
+	nasm -f elf64 testing/box.asm
+	ld -s -o box testing/box.o
+	rm testing/box.o
 
-dynbox:
-	nasm -f elf64 dynamicBox.asm
-	ld -s -o dynamicBox dynamicBox.o
-	rm dynamicBox.o
+# prints a neat little box, but this time by allocating memory and setting it up first
+dynbox: testing/dynamicBox.asm
+	nasm -f elf64 testing/dynamicBox.asm
+	ld -s -o dynamicBox testing/dynamicBox.o
+	rm testing/dynamicBox.o
 
-numInput:
-	nasm -f elf64 numberInput.asm
-	ld -s -o numInput numberInput.o
-	rm numberInput.o
+# gets a single digit number from stdin and prints it n times, where n is the value of the digit 
+numInput: testing/numberInput.asm
+	nasm -f elf64 testing/numberInput.asm
+	ld -s -o numInput testing/numberInput.o
+	rm testing/numberInput.o
 
-multiDigitNumberConversionFromString:
-	nasm -f elf64 mdNumConvert.asm
-	ld -s -o mdNumConvert mdNumConvert.o
-	rm mdNumConvert.o
+# test for converting strings to integers
+# the intended output is a number of characters equal to the value of the string integer, for verification use
+multiDigitIntFromString: testing/multiDigitIntegerFromString.asm
+	nasm -f elf64 testing/multiDigitIntegerFromString.asm
+	ld -s -o mdIntFs testing/multiDigitIntegerFromString.o
+	rm testing/multiDigitIntegerFromString.o
 
-multiDigitNumberToString: mdTs.asm
-	nasm -f elf64 mdTs.asm -F dwarf -g
-	ld -s -o mdTs mdTs.o
-	rm mdTs.o
+# test for convering 64 bit integers to a string
+# intended output is the number in a readable form
+multiDigitIntToString: testing/multiDigitIntegerToString.asm
+	nasm -f elf64 testing/multiDigitIntegerToString.asm
+	ld -s -o mdIntTs testing/multiDigitIntegerToString.o
+	rm testing/multiDigitIntegerToString.o
 	
+# IO subroutines that are meant to replace what stdio would do in C, 
+# but in asm without importing the C standard libararies
 basically_stdio: basically_stdio.asm
 	nasm -f elf64 basically_stdio.asm
 	ld -s -o basically_stdio basically_stdio.o
