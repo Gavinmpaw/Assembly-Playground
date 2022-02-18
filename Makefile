@@ -24,7 +24,7 @@ multiDigitNumberConversionFromString:
 	rm mdNumConvert.o
 
 multiDigitNumberToString: mdTs.asm
-	nasm -f elf64 mdTs.asm
+	nasm -f elf64 mdTs.asm -F dwarf -g
 	ld -s -o mdTs mdTs.o
 	rm mdTs.o
 	

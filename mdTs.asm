@@ -5,12 +5,45 @@ global _start
 _start:
 
 	mov rdi, 421
-	call print_i64	
+	call print_i64_simplified	
 	call print_nl
 
 	mov rax, 60
 	mov rsi, 0
 	syscall
+
+; 
+print_i64_simplified:
+	mov rax, rdi
+	mov r11, 10
+
+	mov rcx, 0
+
+	print_i64_simplified_lpSt:
+		cqo
+		idiv r11
+
+		push rdx
+		inc rcx
+
+		cmp rax, 0
+		jne print_i64_simplified_lpSt
+
+	print_i64_simplified_lpSt2:
+		pop rdi
+
+		push rcx
+
+		call print_single_digit
+
+		pop rcx
+		dec rcx
+
+		cmp rcx, 0
+		jg print_i64_simplified_lpSt2
+
+	ret
+	
 
 ; expects a 64 bit integer stored in rdi, no return value
 ; clobbers rax, rcx, rdx, rsi, rdi, r11, rcx
@@ -68,7 +101,7 @@ print_i64:
 
 ; expects a pointer to a i64 stored in rdi, returns the length of that number in rax
 ; clobbers r11, rdi, rsi, rax
-; TODO I think this can be made cleaner by repeatedly dividing the original number by 10 and subtracting (10*the result) instead of comparing it to some other value
+; TODO I think this can be made cleaner by repeatedly dividing the original number by 10 and using rax as the new number on the next loop
 get_i64_digit_count:
 	mov r11, rdi ; r11 should hold the address of the number
 
