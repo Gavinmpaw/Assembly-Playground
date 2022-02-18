@@ -1,7 +1,5 @@
 section .data
 	number dq 601534
-	char db '#'
-	numberChars db '0','1','2','3','4','5','6','7','8','9'
 
 section .text
 
@@ -50,12 +48,17 @@ _start:
 
 		push rdi
 
-		lea rsi, [numberChars + r11]
+		;lea rsi, [numberChars + r11]
+		add r11, 48
+		push r11
+				
+		lea rsi, [rsp]
 		mov rax, 1
 		mov rdi, 1
 		mov rdx, 1
 		syscall
 
+		pop r11
 		pop rdi
 
 		cmp rdi, 0
