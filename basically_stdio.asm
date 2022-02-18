@@ -19,6 +19,14 @@ _start:
 	mov rdi, 0
 	syscall
 
+; takes a format string and arguments for each of the format specifiers
+; rdi = first arg = pointer to format string, 
+; rsi = second arg, 
+; rdx = third arg,
+; rcx = fourth arg, 
+; r8  = fifth arg, 
+; r9  = sixth arg, 
+; stack = args > 6
 basically_printf:
 	mov rsi, rdi
 
