@@ -1,5 +1,5 @@
 section .data
-	number dq 6015
+	number dq 601534
 	char db '#'
 	numberChars db '0','1','2','3','4','5','6','7','8','9'
 
@@ -9,19 +9,25 @@ global _start
 
 _start:
 	mov rsi, 0
-	mov rdi, 10
+	mov rdi, 1
 
-	lpSt: ; TODO this loop is currently broken, so I just set rdi after
+	lpSt:
 		mov rax, [number]
 		cqo
 		idiv rdi
 
-		imul rdi, 10
-
 		cmp rax, 0
-		jg lpSt	
+		jle lpEd
 
-	mov rdi, 1000	
+		imul rdi, 10	
+		jmp lpSt
+	lpEd:
+
+	mov rbx, 10
+	mov rax, rdi
+	cqo
+	idiv rbx
+	mov rdi, rax
 
 	lpSt2:
 		mov rax, [number]
@@ -34,6 +40,8 @@ _start:
 		imul rdi, rax
 		sub [number], rdi
 
+		pop rdi
+		
 		mov rbx, 10
 		mov rax, rdi
 		cqo
@@ -50,15 +58,9 @@ _start:
 
 		pop rdi
 
-		cmp rdx, 0
+		cmp rdi, 0
 		jg lpSt2
 		
-		
-
-			
-			
-
-
 	mov rax, 60
 	mov rsi, 0
 	syscall
