@@ -28,46 +28,47 @@ _start:
 ; r9  = sixth arg, 
 ; stack = args > 6
 basically_printf:
-	mov rsi, rdi
+	mov r10, rdi ; using r10 as counter for current position, to avoid wiping out arguments that would be in other registers
 
 	startLp:
-	cmp byte [rsi], 0
+	cmp byte [r10], 0
 	je end
-		cmp byte [rsi], 0x25
+		cmp byte [r10], 0x25
 		je formatHandling
 
-		mov rax, 1 ; write
-		mov rdi, 1 ; stdout
-		mov rdx, 1 ; 1 byte
-		syscall ; esi stores the pointer to what to print
+		mov rax, 1 	; write
+		mov rdi, 1 	; stdout
+		mov rdx, 1 	; 1 byte
+		mov rsi, r10
+		syscall 	; rsi stores the pointer to what to print
 		jmp nonHandle
 
 	formatHandling:
 		call printFormat
 
 	nonHandle:
-	inc rsi
+	inc r10
 	jmp startLp
 
 	end:
 	ret
 
 printFormat:
-	inc rsi
-	cmp byte [rsi], 'd'
+	inc r10
+	cmp byte [r10], 'd'
 	je decimalIntegerPrint
 	
-	push rsi
+	push r10
 	mov rdi, formatError
 	call basically_printf
-	pop rsi
+	pop r10
 	ret
 
 	decimalIntegerPrint:	
-		push rsi
+		push r10
 		mov rdi, decimPlaceholder
 		call basically_printf
-		pop rsi
+		pop r10
 		ret
 
 ; expects a 64 bit integer in rdi, returns nothing
