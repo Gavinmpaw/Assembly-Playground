@@ -1,8 +1,6 @@
 section .data
-	string db "int1: %d int2: %d int3: %d int4: %d int5: %d error: %q",10,0
+	string db "int1: %d int2: %d int3: %d int4: %d int5: %d int6-8: %d %d %d error: %q",10,0
 	formatError db "[FORMAT ERROR]",0
-
-	intArg dd 64
 
 section .text
 
@@ -12,10 +10,24 @@ _start:
 	mov rdi, string ; 1st arg
 	mov rsi, 14		; 2nd arg
 	mov rdx, 15		; 3rd arg
-	mov rcx, 16
-	mov r8 , 17
-	mov r9 , 18
-	call basically_printf	
+	mov rcx, 16		; 4th arg
+	mov r8 , 17		; 5th arg
+	mov r9 , 18		; 6th arg
+
+	push rbp		; function prologue, pushes old value of rbp, and moves rsp into rbp
+	mov rbp, rsp	; the result is that anything pushed after this will be at (rbp - 8 - 8*n) where n is the "index" of the thing
+
+	mov r10, 8	; 7th arg
+	push r10
+	mov r10, 14	; 8th arg
+	push r10
+	mov r10, 16	; 9th arg
+	push r10	
+
+	call basically_printf
+
+	mov rsp, rbp	; function epilogue, resets back to where the stack was before the function prologue, effectively removes anything pushed
+	pop rbp			; since the prologue
 
 	mov rax, 60
 	mov rdi, 0
@@ -64,7 +76,7 @@ basically_printf:
 		push rdx				; push all registers that may be clobbered but are needed later
 		push rcx	
 		push rdi
-		push rsi		
+		push rsi	
 
 		mov rdi, r11 ; format specifier
 		
@@ -95,7 +107,13 @@ basically_printf:
 			mov rsi, r9
 			jmp argEnd
 		stackArg:
-			; TODO code here for getting arguments from the stack
+			mov rcx, r10 	; move arg counter into r10
+			sub rcx, 5		; subtract 5 from it (it should be 6 for the first stack arg, 7 for the second, and so on)
+			imul rcx, 8		; multiply it by 8 to get the offset from rbp where the arg can be found
+			mov rsi, rbp	; move rbp into rsi
+			sub rsi, rcx	; subtract the offset to get the address of the argument
+			mov rsi, [rsi]	; move the actual value at that location into rsi instead (the print format call expects the argument itself to be in rsi)
+			jmp argEnd
 
 		argEnd:
 		call printFormat
