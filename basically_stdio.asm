@@ -34,13 +34,7 @@ _start:
 	syscall
 
 ; takes a format string and arguments for each of the format specifiers
-; rdi = first arg = pointer to format string, 
-; rsi = second arg, 
-; rdx = third arg,
-; rcx = fourth arg, 
-; r8  = fifth arg, 
-; r9  = sixth arg, 
-; stack = args > 6
+; in the following order rdi, rsi, rdx, rcx, r8, r9, and any further on the stack
 basically_printf:
 	mov r10, 1 		; current format argument, starting at 1 because format string is 0
 
@@ -80,7 +74,7 @@ basically_printf:
 
 		mov rdi, r11 ; format specifier
 		
-		cmp r10, 1
+		cmp r10, 1		; stack of compare jumps to decide which register to read an argument from
 		je fstArg
 		cmp r10, 2
 		je sndArg
@@ -110,7 +104,7 @@ basically_printf:
 			mov rcx, r10 	; move arg counter into r10
 			sub rcx, 5		; subtract 5 from it (it should be 6 for the first stack arg, 7 for the second, and so on)
 			imul rcx, 8		; multiply it by 8 to get the offset from rbp where the arg can be found
-			mov rsi, rbp	; move rbp into rsi
+			mov rsi, rbp
 			sub rsi, rcx	; subtract the offset to get the address of the argument
 			mov rsi, [rsi]	; move the actual value at that location into rsi instead (the print format call expects the argument itself to be in rsi)
 			jmp argEnd
