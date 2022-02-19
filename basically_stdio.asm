@@ -1,6 +1,5 @@
 section .data
-	string db "first: %d second: %d error: %q",10,0
-	decimPlaceholder db "[DecimalInt]",0
+	string db "int1: %d int2: %d int3: %d int4: %d int5: %d error: %q",10,0
 	formatError db "[FORMAT ERROR]",0
 
 	intArg dd 64
@@ -11,8 +10,11 @@ global _start
 
 _start:
 	mov rdi, string ; 1st arg
-	mov rsi, 10		; 2nd arg
+	mov rsi, 14		; 2nd arg
 	mov rdx, 15		; 3rd arg
+	mov rcx, 16
+	mov r8 , 17
+	mov r9 , 18
 	call basically_printf	
 
 	mov rax, 60
@@ -28,6 +30,7 @@ _start:
 ; r9  = sixth arg, 
 ; stack = args > 6
 basically_printf:
+	mov r10, 1 		; current format argument, starting at 1 because format string is 0
 
 	startLp:
 	cmp byte [rdi], 0
@@ -35,9 +38,10 @@ basically_printf:
 		cmp byte [rdi], 0x25
 		je formatHandling
 
-		push rdi
+		push rdi ; push all registers which are clobbered by the syscall
 		push rsi
 		push rdx
+		push rcx
 
 		mov rsi, rdi
 		mov rax, 1 	; write
@@ -45,6 +49,7 @@ basically_printf:
 		mov rdx, 1 	; 1 byte
 		syscall 	; rsi stores the pointer to what to print
 
+		pop rcx	; pop previously pushed registers to restore them to their pre-syscall state
 		pop rdx
 		pop rsi
 		pop rdi
@@ -52,7 +57,54 @@ basically_printf:
 		jmp nonHandle
 
 	formatHandling:
+		inc rdi					; inc rdi, it should now point to the format character
+		xor r11, r11			; set r11 to 0
+		mov r11b , byte [rdi]	; move the format character into r11
+
+		push rdx				; push all registers that may be clobbered but are needed later
+		push rcx	
+		push rdi
+		push rsi		
+
+		mov rdi, r11 ; format specifier
+		
+		cmp r10, 1
+		je fstArg
+		cmp r10, 2
+		je sndArg
+		cmp r10, 3
+		je thrArg
+		cmp r10, 4
+		je frtArg
+		cmp r10, 5
+		je fifArg
+		jmp stackArg
+
+		fstArg:
+			jmp argEnd
+		sndArg:
+			mov rsi, rdx
+			jmp argEnd
+		thrArg:
+			mov rsi, rcx
+			jmp argEnd
+		frtArg:
+			mov rsi, r8
+			jmp argEnd
+		fifArg:
+			mov rsi, r9
+			jmp argEnd
+		stackArg:
+			; TODO code here for getting arguments from the stack
+
+		argEnd:
 		call printFormat
+		
+		inc r10
+		pop rsi					; pop saved registers
+		pop rdi
+		pop rcx
+		pop rdx
 
 	nonHandle:
 	inc rdi
@@ -61,33 +113,20 @@ basically_printf:
 	end:
 	ret
 
+; REDEFINING, rdi hold format specifier, rsi hold argument
 printFormat:
-	inc rdi
-	cmp byte [rdi], 'd'
+	;inc rdi
+	cmp rdi, 'd'
 	je decimalIntegerPrint
 
 	; this should only be run in the case of an unrecognised format tag, prints [FORMAT ERROR] to stdout	
-	push rdi
 	mov rdi, formatError
 	call basically_printf
-	pop rdi
-
 	ret
 
 	decimalIntegerPrint:	
-		push rdi
-		push rsi
-		push rdx
-		push rcx
-		
 		mov rdi, rsi
 		call print_i64
-	
-		pop rcx
-		pop rdx
-		pop rsi
-		pop rdi
-
 		ret
 
 ; expects a 64 bit integer in rdi, returns nothing
