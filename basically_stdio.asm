@@ -28,47 +28,66 @@ _start:
 ; r9  = sixth arg, 
 ; stack = args > 6
 basically_printf:
-	mov r10, rdi ; using r10 as counter for current position, to avoid wiping out arguments that would be in other registers
 
 	startLp:
-	cmp byte [r10], 0
+	cmp byte [rdi], 0
 	je end
-		cmp byte [r10], 0x25
+		cmp byte [rdi], 0x25
 		je formatHandling
 
+		push rdi
+		push rsi
+		push rdx
+
+		mov rsi, rdi
 		mov rax, 1 	; write
 		mov rdi, 1 	; stdout
 		mov rdx, 1 	; 1 byte
-		mov rsi, r10
 		syscall 	; rsi stores the pointer to what to print
+
+		pop rdx
+		pop rsi
+		pop rdi
+	
 		jmp nonHandle
 
 	formatHandling:
 		call printFormat
 
 	nonHandle:
-	inc r10
+	inc rdi
 	jmp startLp
 
 	end:
 	ret
 
 printFormat:
-	inc r10
-	cmp byte [r10], 'd'
+	inc rdi
+	cmp byte [rdi], 'd'
 	je decimalIntegerPrint
-	
-	push r10
+
+	; this should only be run in the case of an unrecognised format tag, prints [FORMAT ERROR] to stdout	
+	push rdi
 	mov rdi, formatError
 	call basically_printf
-	pop r10
+	pop rdi
+
 	ret
 
 	decimalIntegerPrint:	
-		push r10
-		mov rdi, decimPlaceholder
-		call basically_printf
-		pop r10
+		push rdi
+		push rsi
+		push rdx
+		push rcx
+		
+		mov rdi, rsi
+		call print_i64
+	
+		pop rcx
+		pop rdx
+		pop rsi
+		pop rdi
+
 		ret
 
 ; expects a 64 bit integer in rdi, returns nothing
