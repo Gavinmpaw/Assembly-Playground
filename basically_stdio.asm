@@ -1,13 +1,14 @@
 section .data
-	string db "int1: %d int2: %d int3: %d int4: %d int5: %d int6-8: %d %d %d error: %q",10,0
+	fstring db " int1: %d,%n int2: %d,%n int3: %d,%n int4: %d,%n int5: %d,%n int6-8: %d %d %d,%n string: %s,%n error: %q %n",0
 	formatError db "[FORMAT ERROR]",0
+	string db "test words",0
 
 section .text
 
 global _start
 
 _start:
-	mov rdi, string ; 1st arg
+	mov rdi, fstring ; 1st arg
 	mov rsi, 14		; 2nd arg
 	mov rdx, 15		; 3rd arg
 	mov rcx, 16		; 4th arg
@@ -23,6 +24,8 @@ _start:
 	push r10
 	mov r10, 16	; 9th arg
 	push r10	
+	mov r10, string
+	push r10
 
 	call basically_printf
 
@@ -35,6 +38,7 @@ _start:
 
 ; takes a format string and arguments for each of the format specifiers
 ; in the following order rdi, rsi, rdx, rcx, r8, r9, and any further on the stack
+; clobbers rax, r11, rcx, rdx, rcx, rdi, rsi, r10
 basically_printf:
 	mov r10, 1 		; current format argument, starting at 1 because format string is 0
 
@@ -111,6 +115,7 @@ basically_printf:
 
 		argEnd:
 		call printFormat
+		sub r10, rax
 		
 		inc r10
 		pop rsi					; pop saved registers
@@ -125,20 +130,36 @@ basically_printf:
 	end:
 	ret
 
-; REDEFINING, rdi hold format specifier, rsi hold argument
+; given a format character and its assosiated argument, prints the argument
+; expects the format char in rdi and its argument in rsi
+; clobbers rax, r11, rcx, rdx, rcx, rdi, rsi
 printFormat:
 	;inc rdi
 	cmp rdi, 'd'
 	je decimalIntegerPrint
+	cmp rdi, 's'
+	je stringPrint
+	cmp rdi, 'n'
+	je newlinePrint
 
 	; this should only be run in the case of an unrecognised format tag, prints [FORMAT ERROR] to stdout	
 	mov rdi, formatError
 	call basically_printf
 	ret
 
+	newlinePrint:
+		call print_nl
+		mov rax, 1
+		ret
+	stringPrint:
+		mov rdi, rsi
+		call basically_printf
+		mov rax, 0
+		ret
 	decimalIntegerPrint:	
 		mov rdi, rsi
 		call print_i64
+		mov rax, 0
 		ret
 
 ; expects a 64 bit integer in rdi, returns nothing
@@ -202,9 +223,4 @@ print_nl:
 
         pop rdi
 
-        ret
-
-
-
-
-	
+        ret	
