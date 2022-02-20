@@ -16,7 +16,7 @@ _start:
 	mov	rdx, 12 	; length 12
 	syscall 
 
-	mov	eax, 60 	; exit program
-	mov	ebx, 0 		; return 0
+	mov	rax, 60 	; exit program
+	mov	rdi, 0 		; return 0
 	syscall  
 
