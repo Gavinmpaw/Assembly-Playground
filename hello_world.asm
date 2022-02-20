@@ -10,14 +10,13 @@ global _start
 _start:
 
 	; printing the string defined in data
-	mov	eax, 4 		; print
-	mov	ebx, 1 		; to stdout
-	mov	ecx, myMessage  ; this data
-	mov	edx, 12 	; length 12
-	int	0x80 		; syscall
+	mov	rax, 1 		; print
+	mov	rdi, 1 		; to stdout
+	mov	rsi, myMessage  ; this data
+	mov	rdx, 12 	; length 12
+	syscall 
 
-	; exiting program
-	mov	eax, 1 		; exit program
+	mov	eax, 60 	; exit program
 	mov	ebx, 0 		; return 0
-	int	0x80   		; syscall	
+	syscall  
 
