@@ -40,11 +40,11 @@ uses linux x86_64 system calls
 </ul>
   
 <h3>basically_stdio.asm</h3>
-  <li>IO subroutines meant to allow easy io without using the C standard libraries</li>
+  <li>IO subroutines meant to allow easy IO without using the C standard libraries</li>
   <ul>
   	<li><h5>basically_printf<h5>
-		<p> Expects arguments in rdi, rsi, rdx, rcx, r8, r9 and any further on the stack
-			currently supports %d for integers, %s for strings, and %n as newline</p>
+		<p> 	Expects arguments in rdi, rsi, rdx, rcx, r8, r9 and any further on the stack
+			,currently supports %d for integers, %s for strings, and %n for newline</p>
 	</li>
   </ul>
   
