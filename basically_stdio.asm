@@ -1,7 +1,9 @@
 section .data
 	fstring db " int1: %d,%n int2: %d,%n int3: %d,%n int4: %d,%n int5: %d,%n int6-8: %d %d %d,%n string: %s,%n error: %q %n",0
-	formatError db "[FORMAT ERROR]",0
 	string db "test words",0
+
+	; Constants
+	FORMAT_ERROR db "[FORMAT ERROR]",0
 
 section .text
 
@@ -42,11 +44,11 @@ _start:
 basically_printf:
 	mov r10, 1 		; current format argument, starting at 1 because format string is 0
 
-	startLp:
+	basically_printf_startLp:
 	cmp byte [rdi], 0
-	je end
+	je basically_printf_end
 		cmp byte [rdi], 0x25
-		je formatHandling
+		je basically_printf_format_handling
 
 		push rdi ; push all registers which are clobbered by the syscall
 		push rsi
@@ -64,9 +66,9 @@ basically_printf:
 		pop rsi
 		pop rdi
 	
-		jmp nonHandle
+		jmp basically_printf_non_handling
 
-	formatHandling:
+	basically_printf_format_handling:
 		inc rdi					; inc rdi, it should now point to the format character
 		xor r11, r11			; set r11 to 0
 		mov r11b , byte [rdi]	; move the format character into r11
@@ -79,42 +81,42 @@ basically_printf:
 		mov rdi, r11 ; format specifier
 		
 		cmp r10, 1		; stack of compare jumps to decide which register to read an argument from
-		je fstArg
+		je basically_printf_first_format_arg
 		cmp r10, 2
-		je sndArg
+		je basically_printf_second_format_arg
 		cmp r10, 3
-		je thrArg
+		je basically_printf_third_format_arg
 		cmp r10, 4
-		je frtArg
+		je basically_printf_fourth_format_arg
 		cmp r10, 5
-		je fifArg
-		jmp stackArg
+		je basically_printf_fifth_format_arg
+		jmp basically_printf_stack_format_args
 
-		fstArg:
-			jmp argEnd
-		sndArg:
+		basically_printf_first_format_arg:
+			jmp basically_printf_argument_end	; because the argument is already in rdi. could be optomised by just replacing the jump to this tag
+		basically_printf_second_format_arg:
 			mov rsi, rdx
-			jmp argEnd
-		thrArg:
+			jmp basically_printf_argument_end
+		basically_printf_third_format_arg:
 			mov rsi, rcx
-			jmp argEnd
-		frtArg:
+			jmp basically_printf_argument_end
+		basically_printf_fourth_format_arg:
 			mov rsi, r8
-			jmp argEnd
-		fifArg:
+			jmp basically_printf_argument_end
+		basically_printf_fifth_format_arg:
 			mov rsi, r9
-			jmp argEnd
-		stackArg:
+			jmp basically_printf_argument_end
+		basically_printf_stack_format_args:
 			mov rcx, r10 	; move arg counter into r10
 			sub rcx, 5		; subtract 5 from it (it should be 6 for the first stack arg, 7 for the second, and so on)
 			imul rcx, 8		; multiply it by 8 to get the offset from rbp where the arg can be found
 			mov rsi, rbp
 			sub rsi, rcx	; subtract the offset to get the address of the argument
 			mov rsi, [rsi]	; move the actual value at that location into rsi instead (the print format call expects the argument itself to be in rsi)
-			jmp argEnd
+			jmp basically_printf_argument_end	; technically not needed
 
-		argEnd:
-		call printFormat
+		basically_printf_argument_end:
+		call print_format
 		sub r10, rax
 		
 		inc r10
@@ -123,40 +125,40 @@ basically_printf:
 		pop rcx
 		pop rdx
 
-	nonHandle:
+	basically_printf_non_handling:
 	inc rdi
-	jmp startLp
+	jmp basically_printf_startLp
 
-	end:
+	basically_printf_end:
 	ret
 
 ; given a format character and its assosiated argument, prints the argument
 ; expects the format char in rdi and its argument in rsi
 ; clobbers rax, r11, rcx, rdx, rcx, rdi, rsi
-printFormat:
+print_format:
 	;inc rdi
 	cmp rdi, 'd'
-	je decimalIntegerPrint
+	je print_format_decimal_integer_print
 	cmp rdi, 's'
-	je stringPrint
+	je print_format_string_print
 	cmp rdi, 'n'
-	je newlinePrint
+	je print_format_newline_print
 
 	; this should only be run in the case of an unrecognised format tag, prints [FORMAT ERROR] to stdout	
-	mov rdi, formatError
+	mov rdi, FORMAT_ERROR
 	call basically_printf
 	ret
 
-	newlinePrint:
+	print_format_newline_print:
 		call print_nl
 		mov rax, 1
 		ret
-	stringPrint:
+	print_format_string_print:
 		mov rdi, rsi
 		call basically_printf
 		mov rax, 0
 		ret
-	decimalIntegerPrint:	
+	print_format_decimal_integer_print:	
 		mov rdi, rsi
 		call print_i64
 		mov rax, 0
