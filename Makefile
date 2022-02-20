@@ -28,6 +28,11 @@ multiDigitIntToString: testing/multiDigitIntegerToString.asm
 	ld -s -o mdIntTs testing/multiDigitIntegerToString.o
 	rm testing/multiDigitIntegerToString.o
 	
+arbitraryUserInput:	testing/userInput.asm
+	nasm -f elf64 testing/userInput.asm
+	ld -s -o userInput testing/userInput.o
+	rm testing/userInput.o
+
 basically_stdio: basically_stdio.asm
 	nasm -f elf64 basically_stdio.asm
 	ld -s -o basically_stdio basically_stdio.o
