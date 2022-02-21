@@ -38,7 +38,15 @@ uses linux x86_64 system calls
   <li>the reverse of the above, converts a 64 bit integer into a string and prints it</li>
   <li>does not however use the data section... as I was also using it to experiment with using the stack for temporary variable storage</li>
 </ul>
-  
+
+<h3>testing/userInput.asm</h3>
+<ul>
+  <li>contains two subroutines that read user input into a buffer provided by the caller</li>
+  <li>read_string - reads characters until either a maximum length, or a newline. whichever comes first</li>
+  <li>read_line - reads characters to the end of the line, discards anything beyond the buffer length</li>
+  <li> Both will 0 terminate the string in the buffer </li>
+</ul>
+ 
 <h3>basically_stdio.asm</h3>
   <li>IO subroutines meant to allow easy IO without using the C standard libraries</li>
   <ul>
