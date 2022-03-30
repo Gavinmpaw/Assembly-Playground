@@ -74,7 +74,7 @@ create_node:
 
 	ret
 
-; void insert_node(node* root, node* new)
+; void insert_node(node** root, node* new)
 ; should take in a node and the root of the target tree and apropriately insert the node
 ; if the given value is already present, should exit and not insert anything
 ; returns nothing
