@@ -1,42 +1,7 @@
 section .data
-	fstring db " int1: %d,%n int2: %d,%n int3: %d,%n int4: %d,%n int5: %d,%n int6-8: %d %d %d,%n string: %s,%n error: %q %n",0
-	string db "test words",0
-
-	; Constants
-	FORMAT_ERROR db "[FORMAT ERROR]",0
+	FORMAT_ERROR db "[FORMAT ERORR]",0
 
 section .text
-
-global _start
-
-_start:
-	mov rdi, fstring ; 1st arg
-	mov rsi, 14		; 2nd arg
-	mov rdx, 15		; 3rd arg
-	mov rcx, 16		; 4th arg
-	mov r8 , 17		; 5th arg
-	mov r9 , 18		; 6th arg
-
-	push rbp		; function prologue, pushes old value of rbp, and moves rsp into rbp
-	mov rbp, rsp	; the result is that anything pushed after this will be at (rbp - 8 - 8*n) where n is the "index" of the thing
-
-	mov r10, 8	; 7th arg
-	push r10
-	mov r10, 14	; 8th arg
-	push r10
-	mov r10, 16	; 9th arg
-	push r10	
-	mov r10, string
-	push r10
-
-	call basically_printf
-
-	mov rsp, rbp	; function epilogue, resets back to where the stack was before the function prologue, effectively removes anything pushed
-	pop rbp			; since the prologue
-
-	mov rax, 60
-	mov rdi, 0
-	syscall
 
 ; takes a format string and arguments for each of the format specifiers
 ; in the following order rdi, rsi, rdx, rcx, r8, r9, and any further on the stack
