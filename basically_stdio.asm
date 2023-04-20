@@ -3,6 +3,14 @@ section .data
 
 section .text
 
+printf:
+	push rbp
+	mov rbp, rsp
+		call basically_printf
+	mov rsp, rbp
+	pop rbp
+	ret
+
 ; takes a format string and arguments for each of the format specifiers
 ; in the following order rdi, rsi, rdx, rcx, r8, r9, and any further on the stack
 ; clobbers rax, r11, rcx, rdx, rcx, rdi, rsi, r10
